@@ -1,4 +1,7 @@
-﻿using HotelProject.WebUI.Dtos.GuestDto;
+﻿using FluentValidation;
+using FluentValidation.Results;
+using HotelProject.WebUI.Dtos.GuestDto;
+using HotelProject.WebUI.ValidationRules.GuestValidationRules;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using System.Text;
@@ -29,10 +32,12 @@ namespace HotelProject.WebUI.Controllers
             return View();
         }
         [HttpPost]
-        public async Task<IActionResult> AddGuest(CreateGuestDto createGuestDto)
+        public async Task<IActionResult> AddGuest(CreateGuestDto createGuestDto) 
         {
-            if (ModelState.IsValid)
-            {
+			CreateGuestValidator validationRules = new CreateGuestValidator();
+			ValidationResult result = validationRules.Validate(createGuestDto);
+			if (result.IsValid)
+			{
                 var client = _httpClientFactory.CreateClient();
                 var jsonData = JsonConvert.SerializeObject(createGuestDto);
                 StringContent stringContent = new StringContent(jsonData, Encoding.UTF8, "application/json");
@@ -43,12 +48,17 @@ namespace HotelProject.WebUI.Controllers
                 }
                 return View();
             }
-            else
-            {
-                return View();
-            }
-        }
-        public async Task<IActionResult> DeleteGuest(int id)
+			else
+			{
+				foreach (var item in result.Errors)
+				{
+					ModelState.AddModelError(item.PropertyName, item.ErrorMessage);
+				}
+			}
+			return View();
+
+		}
+		public async Task<IActionResult> DeleteGuest(int id)
         {
             var client = _httpClientFactory.CreateClient();
             var responseMessage = await client.DeleteAsync($"http://localhost:5195/api/Guest/{id}");
@@ -76,7 +86,9 @@ namespace HotelProject.WebUI.Controllers
         [HttpPost]
         public async Task<IActionResult> UpdateGuest(UpdateGuestDto updateGuestDto)
         {
-            if (ModelState.IsValid)
+			UpdateGuestValidator validationRules = new UpdateGuestValidator();
+			ValidationResult result = validationRules.Validate(updateGuestDto);
+			if (result.IsValid)
             {
                 var client = _httpClientFactory.CreateClient();
                 var jsonData = JsonConvert.SerializeObject(updateGuestDto);
@@ -88,7 +100,14 @@ namespace HotelProject.WebUI.Controllers
                 }
                 return View();
             }
-            return View();
+			else
+			{
+				foreach (var item in result.Errors)
+				{
+					ModelState.AddModelError(item.PropertyName, item.ErrorMessage);
+				}
+			}
+			return View();
         }
     }
 }
