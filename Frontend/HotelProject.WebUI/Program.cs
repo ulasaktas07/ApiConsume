@@ -4,6 +4,8 @@ using HotelProject.DataAccessLayer.Concrete;
 using HotelProject.EntityLayer.Concrete;
 using HotelProject.WebUI.Dtos.GuestDto;
 using HotelProject.WebUI.ValidationRules.GuestValidationRules;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc.Authorization;
 namespace HotelProject.WebUI
 {
 	public class Program
@@ -28,7 +30,6 @@ namespace HotelProject.WebUI
 				app.UseExceptionHandler("/Home/Error");
 			}
 			app.UseStaticFiles();
-
 			app.UseRouting();
 
 			app.UseAuthorization();
