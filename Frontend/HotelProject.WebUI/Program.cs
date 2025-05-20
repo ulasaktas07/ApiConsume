@@ -21,7 +21,19 @@ namespace HotelProject.WebUI
 			// Add services to the container.
 			builder.Services.AddControllersWithViews();
 			builder.Services.AddAutoMapper(typeof(Program));
-
+			builder.Services.AddMvc(config =>
+			{
+				var policy = new AuthorizationPolicyBuilder()
+				.RequireAuthenticatedUser()
+				.Build();
+				config.Filters.Add(new AuthorizeFilter(policy));
+			});
+			builder.Services.ConfigureApplicationCookie(options =>
+			{
+				options.Cookie.HttpOnly = true;
+				options.ExpireTimeSpan = TimeSpan.FromMinutes(30);
+				options.LoginPath = "/Login/Index";
+			});
 			var app = builder.Build();
 
 			// Configure the HTTP request pipeline.
@@ -29,7 +41,10 @@ namespace HotelProject.WebUI
 			{
 				app.UseExceptionHandler("/Home/Error");
 			}
+			app.UseStatusCodePagesWithReExecute("/ErrorPage/Error404","?code={0}");
+			app.UseHttpsRedirection();
 			app.UseStaticFiles();
+			app.UseAuthentication();
 			app.UseRouting();
 
 			app.UseAuthorization();

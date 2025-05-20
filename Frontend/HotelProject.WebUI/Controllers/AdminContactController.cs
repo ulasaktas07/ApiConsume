@@ -1,11 +1,13 @@
 ﻿using HotelProject.WebUI.Dtos.ContactDto;
 using HotelProject.WebUI.Dtos.SendMessageDto;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using System.Text;
 
 namespace HotelProject.WebUI.Controllers
 {
+	[AllowAnonymous]
 	public class AdminContactController : Controller
 	{
 		private readonly IHttpClientFactory _httpClientFactory;
@@ -25,6 +27,7 @@ namespace HotelProject.WebUI.Controllers
 				var values = JsonConvert.DeserializeObject<List<InboxContactDto>>(jsonData);
 				return View(values);
 			}
+			
 			return View();
 		}
 		public async Task<IActionResult> SendBox()
@@ -59,8 +62,16 @@ namespace HotelProject.WebUI.Controllers
 			}
 			return View();
 		}
-		public PartialViewResult SideBarAdminContactPartial()
+		public async Task<PartialViewResult> SideBarAdminContactPartial()
 		{
+			var client = _httpClientFactory.CreateClient();
+			var responseMessage = await client.GetAsync("http://localhost:5195/api/Contact/GetContactCount");
+			if (responseMessage.IsSuccessStatusCode)
+			{
+				var jsonData = await responseMessage.Content.ReadAsStringAsync();
+				var values = JsonConvert.DeserializeObject<List<InboxContactDto>>(jsonData);
+				ViewBag.contactCount = jsonData;
+			}
 			return PartialView();
 		}
 		public PartialViewResult SideBarAdminContactCategoryPartial()
@@ -91,5 +102,6 @@ namespace HotelProject.WebUI.Controllers
 			}
 			return View();
 		}
+
 	}
 }
