@@ -1,7 +1,8 @@
-﻿using Microsoft.AspNetCore.Identity;
-namespace HotelProject.EntityLayer.Concrete
+﻿using HotelProject.EntityLayer.Concrete;
+
+namespace HotelProject.WebUI.Dtos.AppUserDto
 {
-	public class AppUser:IdentityUser<int>
+	public class ResultAppUserDto
 	{
 		public string Name { get; set; }
 		public string Surname { get; set; }
@@ -10,5 +11,6 @@ namespace HotelProject.EntityLayer.Concrete
 		public string? WorkDepartment { get; set; }
 		public int WorkLocationID { get; set; }
 		public WorkLocation WorkLocation { get; set; }
+
 	}
 }

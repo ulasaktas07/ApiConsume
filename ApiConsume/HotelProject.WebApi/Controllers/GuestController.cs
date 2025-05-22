@@ -14,7 +14,7 @@ namespace HotelProject.WebApi.Controllers
         }
 
         [HttpGet]
-        public IActionResult RoomList()
+        public IActionResult GuestList()
         {
             var values = _guestService.TGetList();
             return Ok(values);

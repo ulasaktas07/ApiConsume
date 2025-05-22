@@ -7,7 +7,6 @@ using System.Text;
 
 namespace HotelProject.WebUI.Controllers
 {
-	[AllowAnonymous]
 	public class AdminContactController : Controller
 	{
 		private readonly IHttpClientFactory _httpClientFactory;
