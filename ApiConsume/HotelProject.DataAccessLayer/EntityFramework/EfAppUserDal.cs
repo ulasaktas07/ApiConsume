@@ -11,6 +11,13 @@ namespace HotelProject.DataAccessLayer.EntityFramework
 		public EfAppUserDal(Context context) : base(context)
 		{
 		}
+
+		public int AppUserCount()
+		{
+			var context = new Context();
+			return context.Users.Count();
+		}
+
 		public List<AppUser> UserListWithWorkLocation()
 		{
 			var context = new Context();
